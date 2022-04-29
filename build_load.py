@@ -6,6 +6,9 @@ import re
 import operator
 from collections import Counter
 import pandas as pd
+from nltk.stem.porter import PorterStemmer
+
+#dict_from_csv = {} #dictionary for index to fill with load command
 
 #This command instructs the search tool to crawl the website,
 #build the index, and save the resulting index into the file system
@@ -123,3 +126,4 @@ def load():
 
     dict_from_csv = pd.read_csv('csv_file.csv', header=None, index_col=0, squeeze=True).to_dict()
     print(dict_from_csv)
+
