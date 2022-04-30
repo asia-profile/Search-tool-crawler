@@ -6,8 +6,11 @@ import re
 import string
 from nltk.stem.porter import PorterStemmer
 import csv
+import pandas as pd
 
 index = {}
+#urls = []
+dict_from_csv = {}
 
 
 def visible_text(element):
@@ -52,8 +55,17 @@ def read_url(url):
     return None
 
 
+#This command loads the index from the file system.
+#Obviously, this command will only work if the index has previously been created using the ‘build’ command
+#so, here i try loading index from file into a dictionary
+def load():
+    dict_from_csv = pd.read_csv('scraping.csv', header=None, index_col=0, squeeze=True).to_dict()
+    #dict_from_csv.append(pd.read_csv('scraping.csv', header=None, index_col=0, squeeze=True).to_dict())
+    print(dict_from_csv)
+    #działa :)
+
+
 while True:
-        #urls = []
         command_line = input('Enter command to run: ')
         #okay doesn't seem to get annythin doing after entering command, doesn't print stuff
         words = command_line.split() #take all the input string here divided into specific words
@@ -80,20 +92,11 @@ while True:
 
             sorted_keys = sorted(index.keys())
 
-            with open('scraping.csv', 'w') as indexFile:
-                # declare field names
-                # fieldNames = ['word', 'filename', 'filepaths']
+            with open('scraping.csv', 'w') as indexFile: #works now!
                 fieldNames = ['Word', 'Frequency', 'Posting List']
                 csvWriter = csv.DictWriter(indexFile, fieldnames=fieldNames)  # create writeDirectory object
                 csvWriter.writeheader()  # writing the header
-                for i in sorted_keys(): #hmmmm, list object is not callable - tho it might be from the writerow stuff maybe
-                    # print(key, len(index[key]), index[key])
-                    # creating string of all the file names and all the file paths
-                    # pageNameString = reduce(lambda x, y: x + ", " + y, fileDetails['pageNames'])
-                    # occurenceNumberString = reduce(lambda x, y: x + ", " + y, fileDetails['occurrenceNumber'])
-
-                    # writing the row
-                    # csvWriter.writerow({'word': word, 'filename': fileNameString, 'pathname': filePathsString})
+                for i in sorted_keys:
                     csvWriter.writerow({'Word': i, 'Frequency': len(index[i]), 'Posting List': index[i]})
 
             #f = open("output2.txt", "w") #z tym działa! mamy inverted index file
@@ -110,9 +113,9 @@ while True:
 
 
         elif command == "load":
-            #load()
+            load()
             #crawler.print_visited()
-            print(urls) #prints only empty stuff, doesn't seem to be kept from CHOCIAŻ ostatni raze wydało się zadziałać
+            #print(urls) #prints only empty stuff, doesn't seem to be kept from CHOCIAŻ ostatni raze wydało się zadziałać
         #elif command == "print":
         #    print(phrase) #('phase')
         #elif command == "find":
