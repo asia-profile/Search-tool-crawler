@@ -1,4 +1,5 @@
 from crawler import *
+from print_and_find import *
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Comment
@@ -7,10 +8,14 @@ import string
 from nltk.stem.porter import PorterStemmer
 import csv
 import pandas as pd
+import sys
+maxInt = sys.maxsize
+
 
 index = {}
 #urls = []
 dict_from_csv = {}
+new_index = {}
 
 
 def visible_text(element):
@@ -59,39 +64,46 @@ def read_url(url):
 #Obviously, this command will only work if the index has previously been created using the ‘build’ command
 #so, here i try loading index from file into a dictionary
 def load():
-    dict_from_csv = pd.read_csv('scraping.csv', header=None, index_col=0, squeeze=True).to_dict()
-    #dict_from_csv.append(pd.read_csv('scraping.csv', header=None, index_col=0, squeeze=True).to_dict())
-    print(dict_from_csv)
-    #działa :)
+    dict_from_csv = pd.read_csv('scraping.csv').to_dict()
+    print(dict_from_csv.keys()) #shows keys as Word, Frequency, List when dict_from_csv = pd.read_csv('scraping.csv').to_dict()
+    #print(dict_from_csv['Word'][0]) #this prints a
+    words = []
+    frequencies = []
+    positing_lists = []
+    for i in dict_from_csv['Word']:
+        words.append(dict_from_csv['Word'][i])
+    for j in dict_from_csv['Frequency']:
+        frequencies.append(dict_from_csv['Frequency'][j])
+    for k in dict_from_csv['Posting List']:
+        positing_lists.append(dict_from_csv['Posting List'][k])
+    #okay, now trying to make a new dictionary index out of those lists
+    new_index = dict(zip(words, zip(frequencies, positing_lists))) #this would only take the stuff with 2 values
+    #so we put lists second and third together for now
+    print(new_index['a']) #teraz działa
 
 
 while True:
+    # decrease the maxInt value by factor 10
+    # as long as the OverflowError occurs.
+
         command_line = input('Enter command to run: ')
-        #okay doesn't seem to get annythin doing after entering command, doesn't print stuff
         words = command_line.split() #take all the input string here divided into specific words
         command = words[0]
         words.pop(0) #removed the first word from the list, now we can again get the whole phrase for print/find commands
         phrase = listToStr = ' '.join([str(elem) for elem in words])
-            #phrase = phrase.join(words) #okay, no, beacuse it gives it like a joined word
-        #print(command_line)
-        #print(words)
-        #works now, print become shadowed by the print function implemented - so the menu is all right
         crawler = Crawler(urls=['http://example.python-scraping.com/'])
 
         if command == "quit":
             print('Exiting the program') #doesn't print stuff; quit works for breaking of the program but doesn't print stuff there
             exit(1)
+
         elif command == "build":
-            #print(urls)
-            #urls.append(crawler.run()) #nope = appends a list to a list
             urls = crawler.run() #dla sprawdzenia, przed zaczęciem inverted index
-            #print(urls) #prints - stuff. Now trying to loop through this and make index
             for url in urls:
                 if url != '#':
                     read_url(url)
 
             sorted_keys = sorted(index.keys())
-
             with open('scraping.csv', 'w') as indexFile: #works now!
                 fieldNames = ['Word', 'Frequency', 'Posting List']
                 csvWriter = csv.DictWriter(indexFile, fieldnames=fieldNames)  # create writeDirectory object
@@ -99,27 +111,13 @@ while True:
                 for i in sorted_keys:
                     csvWriter.writerow({'Word': i, 'Frequency': len(index[i]), 'Posting List': index[i]})
 
-            #f = open("output2.txt", "w") #z tym działa! mamy inverted index file
-            #output_line = "Word".ljust(15) + "Frequency".ljust(15) + "Posting List".ljust(15) + "\n"
-            #f.writelines(output_line)
-            #f.writelines('-------------------------------------------------------------------------\n\n')
-            #for i in sorted_keys:
-            #    print(i, len(index[i]), index[i])
-            #    output_string = str(i).ljust(15) + str(len(index[i])).ljust(15) + str(index[i]).ljust(15) + "\n"
-            #    f.writelines(output_string)
-            #    f.writelines('\n')
-
-            #f.close()
-
-
         elif command == "load":
             load()
-            #crawler.print_visited()
-            #print(urls) #prints only empty stuff, doesn't seem to be kept from CHOCIAŻ ostatni raze wydało się zadziałać
-        #elif command == "print":
-        #    print(phrase) #('phase')
+        elif command == "print":
+            #print_index('a', new_index)
+            print(phrase) #działa, teraz tylko nie pokazuje nic gdy próbuję przekazywać to do funkcji
         #elif command == "find":
-        #    print(find(phrase))
+            #find(phrase, dict_from_csv)
         else:
             print("Command not found")
 
