@@ -52,10 +52,10 @@ def read_url(url):
         if (i.isalpha()):
             i = ps.stem(i)
             if not i in index.keys(): #or - if i not in index.keys():
-                index[i] = [(url, counter)]
+                index[i] = [url] #index[i] = [(url, counter)] #jeszcze sprawdź co to jest counter - znaczy,
                 counter = counter + len(i) + 1
             else:
-                index[i].append((url, counter))
+                index[i].append(url) #index[i].append((url, counter))
                 counter = counter + len(i) + 1
 
     return None
@@ -79,9 +79,7 @@ def load():
         positing_lists.append(dict_from_csv['Posting List'][k])
     #okay, now trying to make a new dictionary index out of those lists
     new_index = dict(zip(words, zip(frequencies, positing_lists))) #this would only take the stuff with 2 values
-    #new_index = dict(zip(words, positing_lists))
     #so we put lists second and third together for now
-    #print(new_index['peso']) #teraz działa
     return new_index
 
 
@@ -118,7 +116,6 @@ while True:
             new_index=load()
         elif command == "print":
             print_index(phrase, new_index)
-            #print(phrase) #działa, teraz tylko nie pokazuje nic gdy próbuję przekazywać to do funkcji
         elif command == "find":
             find(phrase, new_index)
         else:
