@@ -61,3 +61,6 @@ class Crawler:
 
 #if __name__ == '__main__':
 #    Crawler(urls=['http://example.python-scraping.com/']).run()
+#...wydaje się, że w niektórych się powtarza? nie wiem czemu...
+#aaaa, bo chyba dwa razy puściłam, czyli poszło podwójnie
+#zrobimy nowy plik od sucha i będzie dobrze

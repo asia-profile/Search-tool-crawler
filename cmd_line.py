@@ -1,5 +1,5 @@
 from crawler import *
-from print_and_find import *
+from print_and_find import print_index, find
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Comment
@@ -16,6 +16,7 @@ index = {}
 #urls = []
 dict_from_csv = {}
 new_index = {}
+
 
 
 def visible_text(element):
@@ -65,7 +66,7 @@ def read_url(url):
 #so, here i try loading index from file into a dictionary
 def load():
     dict_from_csv = pd.read_csv('scraping.csv').to_dict()
-    print(dict_from_csv.keys()) #shows keys as Word, Frequency, List when dict_from_csv = pd.read_csv('scraping.csv').to_dict()
+    #print(dict_from_csv.keys()) #shows keys as Word, Frequency, List when dict_from_csv = pd.read_csv('scraping.csv').to_dict()
     #print(dict_from_csv['Word'][0]) #this prints a
     words = []
     frequencies = []
@@ -78,8 +79,10 @@ def load():
         positing_lists.append(dict_from_csv['Posting List'][k])
     #okay, now trying to make a new dictionary index out of those lists
     new_index = dict(zip(words, zip(frequencies, positing_lists))) #this would only take the stuff with 2 values
+    #new_index = dict(zip(words, positing_lists))
     #so we put lists second and third together for now
-    print(new_index['a']) #teraz działa
+    #print(new_index['peso']) #teraz działa
+    return new_index
 
 
 while True:
@@ -112,12 +115,12 @@ while True:
                     csvWriter.writerow({'Word': i, 'Frequency': len(index[i]), 'Posting List': index[i]})
 
         elif command == "load":
-            load()
+            new_index=load()
         elif command == "print":
-            #print_index('a', new_index)
-            print(phrase) #działa, teraz tylko nie pokazuje nic gdy próbuję przekazywać to do funkcji
-        #elif command == "find":
-            #find(phrase, dict_from_csv)
+            print_index(phrase, new_index)
+            #print(phrase) #działa, teraz tylko nie pokazuje nic gdy próbuję przekazywać to do funkcji
+        elif command == "find":
+            find(phrase, new_index)
         else:
             print("Command not found")
 
