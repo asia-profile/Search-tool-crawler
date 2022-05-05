@@ -27,12 +27,9 @@ def find(phrase, dictionary):
                 list_indexed_tuples.append(dictionary[word])
 
 
-    #gdyby chcieć porównywać pojedyńczo, trzeba by dla każdego url robić jedno porównanie słowa
-    #tj gdy słowo jest w trzech urls, mamy 3 entries, bo to dla każdego to będzie coś
     for i in range(len(list_indexed_tuples)):
         x = list_indexed_tuples[i][1].strip("[' ']")
         x_list.append(x)
-        #print(x)
 
     for j in range(len(x_list)):
         chunks = x_list[j].split(',')
